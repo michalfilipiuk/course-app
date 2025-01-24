@@ -21,7 +21,7 @@ export default async function Home() {
       {/* Navbar */}
       <section className="bg-base-200">
         <div className="flex justify-between items-center px-8 py-2 max-w-5xl mx-auto">
-          <div className="font-bold">My First SaaS</div>
+          <div className="font-bold">My First SaaS!</div>
           <div className="space-x-4 max-md:hidden">
             <a className="link link-hover" href="#pricing">Pricing</a>
           </div>

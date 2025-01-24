@@ -1,3 +1,5 @@
+import ButtonLogout from "../components/ButtonLogout";
+
 export default function Dashboard() {
   return (
     <main>
@@ -6,6 +8,7 @@ export default function Dashboard() {
         Create a feedback board in minutes, prioritize features, and build
         products your customers will love
       </div>
+      <ButtonLogout />
     </main>
   );
 }

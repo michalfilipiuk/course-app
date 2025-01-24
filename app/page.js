@@ -1,5 +1,7 @@
 import ButtonLogin from "./components/ButtonLogin";
 import FAQListItem from "./components/FAQListItem";
+import Image from "next/image";
+import productDemo from "@/app/productDemo.jpeg"
 
 export default function Home() {
   const isLoggedIn = true;
@@ -17,7 +19,7 @@ export default function Home() {
     <main>
       {/* Navbar */}
       <section className="bg-base-200">
-        <div className="flex justify-between items-center px-8 py-2 max-w-3xl mx-auto">
+        <div className="flex justify-between items-center px-8 py-2 max-w-5xl mx-auto">
           <div className="font-bold">My First SaaS</div>
           <div className="space-x-4 max-md:hidden">
             <a className="link link-hover" href="#pricing">Pricing</a>
@@ -29,7 +31,9 @@ export default function Home() {
       </section>
 
       {/* Hero */}
-      <section className="px-8 text-center py-32 max-w-3xl mx-auto">
+      <section className="px-8 text-center lg:text-left py-32 max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+        <Image src={productDemo} className="w-96 rounded-lg"/>
+        <div className="flex flex-col items-center lg:items-start">
         <h1 className="text-4xl lg:text-5xl font-extrabold mb-6">
           Collect customer feedback to build better products
         </h1>
@@ -38,6 +42,7 @@ export default function Home() {
           products your customers will love
         </div>
         <ButtonLogin isLoggedIn={isLoggedIn} name={name} />
+        </div>
       </section>
 
       {/* Pricing */}

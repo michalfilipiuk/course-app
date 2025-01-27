@@ -13,7 +13,7 @@ const ButtonVote = ({ count = 0, postId }) => {
   useEffect(() => {
     const fetchVoteStatus = async () => {
       try {
-        const response = await axios.get(`/api/vote/${postId}`);
+        const response = await axios.get(`/api/vote?postId=${postId}`);
         setVoteCount(response.data.votesCounter);
         setHasVoted(response.data.hasVoted);
       } catch (error) {
@@ -39,18 +39,18 @@ const ButtonVote = ({ count = 0, postId }) => {
         setHasVoted(false);
         setVoteCount(prev => prev - 1);
         toast.success("Vote removed");
-        await axios.delete(`/api/vote/${postId}`);
+        await axios.delete(`/api/vote?postId=${postId}`);
         localStorage.removeItem(localStorageKeyName);
       } else {
         setHasVoted(true);
         setVoteCount(prev => prev + 1);
         toast.success("Vote added");
-        await axios.post(`/api/vote/${postId}`);
+        await axios.post(`/api/vote?postId=${postId}`);
         localStorage.setItem(localStorageKeyName, "true");
       }
 
       // Fetch updated vote count after voting
-      const response = await axios.get(`/api/vote/${postId}`);
+      const response = await axios.get(`/api/vote?postId=${postId}`);
       setVoteCount(response.data.votesCounter);
     } catch (error) {
       console.error(error);

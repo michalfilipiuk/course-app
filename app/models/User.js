@@ -13,6 +13,14 @@ const User = mongoose.models.User || mongoose.model("User", new mongoose.Schema(
   image: {
     type: String,
   },
+  hasAccess: {
+    type: Boolean,
+    default: false
+  },
+  customerId: {
+    type: String
+  },
+  
   boards: [
     {
       type: mongoose.Schema.Types.ObjectId,

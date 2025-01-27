@@ -1,12 +1,15 @@
 import connectMongo from "@/app/utils/mongoose";
 import Board from "@/app/models/Board";
+import Post from "@/app/models/Post";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import CardBoardLink from "@/app/components/CardBoardLink";
 import ButtonDeleteBoard from "@/app/components/ButtonDeleteBoard";
+import FormAddPost from "@/app/components/FormAddPost";
+import CardPostAdmin from "@/app/components/CardPostAdmin";
 
-const getBoard = async (boardId) => {
+const getData = async (boardId) => {
   const session = await auth();
   await connectMongo();
   const board = await Board.findOne({
@@ -18,12 +21,16 @@ const getBoard = async (boardId) => {
     redirect("/dashboard");
   }
 
-  return board;
+  const posts = await Post.find({
+    boardId: boardId,
+  }).sort({ createdAt: -1 });
+
+  return { board, posts };
 };
 
 export default async function FeedbackBoard({ params }) {
   const { boardId } = params;
-  const board = await getBoard(boardId);
+  const { board, posts } = await getData(boardId);
   return (
     <main className="bg-base-200 min-h-screen">
       <section className="bg-base-100">
@@ -45,12 +52,22 @@ export default async function FeedbackBoard({ params }) {
           </Link>
         </div>
       </section>
-      <section className="px-5 py-12 max-w-5xl mx-auto">
-        <h1 className="font-extrabold text-xl">{board.name}</h1>
-          <div className="flex flex-row gap-4">
-            <CardBoardLink boardId={board._id} />
-            <ButtonDeleteBoard boardId={board._id} />
-          </div>
+
+      <section className="px-5 py-12 max-w-5xl mx-auto space-y-12 flex flex-col gap-4 md:flex-row">
+        <div className="flex flex-row gap-4">
+          <h1 className="font-extrabold text-xl">{board.name}</h1>
+          <CardBoardLink boardId={board._id} />
+          <ButtonDeleteBoard boardId={board._id} />
+        </div>
+      </section>
+
+      <section className="px-5 py-12 max-w-5xl mx-auto space-y-12 flex flex-col gap-4 md:flex-row">
+        <FormAddPost boardId={board._id} />
+        <ul className="space-y-4 flex-grow items-start justify-start">
+          {posts.map((post) => (
+            <CardPostAdmin key={post._id} post={post} />
+          ))}
+        </ul>
       </section>
     </main>
   );

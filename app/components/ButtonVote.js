@@ -17,7 +17,7 @@ const ButtonVote = ({ count = 0, postId }) => {
         setVoteCount(response.data.votesCounter);
         setHasVoted(response.data.hasVoted);
       } catch (error) {
-        console.error("Error fetching vote status:", error);
+        console.error(error);
       }
     };
 
@@ -28,43 +28,33 @@ const ButtonVote = ({ count = 0, postId }) => {
     const interval = setInterval(fetchVoteStatus, 5000);
 
     // Load initial vote status from localStorage
-    const savedVoteStatus = localStorage.getItem(localStorageKeyName);
-    if (savedVoteStatus) {
-      setHasVoted(savedVoteStatus === "true");
-    }
+    setHasVoted(localStorage.getItem(localStorageKeyName) === "true");
 
     return () => clearInterval(interval);
   }, [postId, localStorageKeyName]);
 
   const handleVote = async () => {
     try {
-      // Optimistically update UI
-      const newVoteStatus = !hasVoted;
-      const voteChange = newVoteStatus ? 1 : -1;
-      
-      setHasVoted(newVoteStatus);
-      setVoteCount(prev => prev + voteChange);
-
-      if(newVoteStatus) {
-        await axios.post(`/api/vote/${postId}`);
-        localStorage.setItem(localStorageKeyName, "true");
-        toast.success("Vote added");
-      } else {
+      if(hasVoted) {
+        setHasVoted(false);
+        setVoteCount(prev => prev - 1);
+        toast.success("Vote removed");
         await axios.delete(`/api/vote/${postId}`);
         localStorage.removeItem(localStorageKeyName);
-        toast.success("Vote removed");
+      } else {
+        setHasVoted(true);
+        setVoteCount(prev => prev + 1);
+        toast.success("Vote added");
+        await axios.post(`/api/vote/${postId}`);
+        localStorage.setItem(localStorageKeyName, "true");
       }
 
-      // Fetch latest count to ensure consistency
+      // Fetch updated vote count after voting
       const response = await axios.get(`/api/vote/${postId}`);
       setVoteCount(response.data.votesCounter);
     } catch (error) {
-      // Revert optimistic updates on error
-      setHasVoted(!hasVoted);
-      setVoteCount(prev => prev + (hasVoted ? 1 : -1));
-      
-      console.error("Vote update failed:", error);
-      toast.error("Failed to update vote. Please try again.");
+      console.error(error);
+      toast.error("Failed to update vote");
     }
   };
 

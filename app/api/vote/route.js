@@ -14,7 +14,7 @@ export async function POST(req) {
     }
     post.votesCounter += 1;
     await post.save();
-    return NextResponse.json({ message: "Vote counted" }, { status: 200 });
+    return NextResponse.json({ message: "Vote counted", votesCounter: post.votesCounter }, { status: 200 });
 
   } catch (error) {
     return NextResponse.json(

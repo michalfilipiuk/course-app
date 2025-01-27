@@ -43,7 +43,6 @@ const ButtonVote = ({ count = 0, postId }) => {
         }
       `}
       onClick={handleVote}
-      disabled={hasVoted}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

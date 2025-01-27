@@ -3,9 +3,15 @@ import connectMongo from "@/app/utils/mongoose";
 import Post from "@/app/models/Post";
 import { auth } from "@/auth";
 
-export async function GET(req, { params }) {
+export async function GET(req) {
   try {
-    const { postId } = params;
+    const { searchParams } = new URL(req.url);
+    const postId = searchParams.get('postId');
+    
+    if (!postId) {
+      return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    }
+
     await connectMongo();
     const post = await Post.findById(postId);
     
@@ -15,7 +21,7 @@ export async function GET(req, { params }) {
 
     // Get current user's session
     const session = await auth();
-    const hasVoted = session ? await checkIfUserVoted(postId, session.user.id) : false;
+    const hasVoted = false; // You'll need to implement your vote tracking logic here
 
     return NextResponse.json({ 
       votesCounter: post.votesCounter,
@@ -23,6 +29,7 @@ export async function GET(req, { params }) {
     });
 
   } catch (error) {
+    console.error('API Error:', error);
     return NextResponse.json(
       { error: "Failed to fetch vote status" },
       { status: 500 }

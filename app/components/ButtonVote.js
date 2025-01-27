@@ -9,9 +9,29 @@ const ButtonVote = ({ count = 0, postId }) => {
   const [hasVoted, setHasVoted] = useState(false);
   const [voteCount, setVoteCount] = useState(count);
 
+  // Fetch current vote count and check vote status on mount and periodically
   useEffect(() => {
+    const fetchVoteStatus = async () => {
+      try {
+        const response = await axios.get(`/api/vote/${postId}`);
+        setVoteCount(response.data.votesCounter);
+        setHasVoted(response.data.hasVoted);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Initial fetch
+    fetchVoteStatus();
+
+    // Poll for updates every 5 seconds
+    const interval = setInterval(fetchVoteStatus, 5000);
+
+    // Load initial vote status from localStorage
     setHasVoted(localStorage.getItem(localStorageKeyName) === "true");
-  }, [localStorageKeyName]);
+
+    return () => clearInterval(interval);
+  }, [postId, localStorageKeyName]);
 
   const handleVote = async () => {
     try {
@@ -28,8 +48,13 @@ const ButtonVote = ({ count = 0, postId }) => {
         await axios.post(`/api/vote/${postId}`);
         localStorage.setItem(localStorageKeyName, "true");
       }
+
+      // Fetch updated vote count after voting
+      const response = await axios.get(`/api/vote/${postId}`);
+      setVoteCount(response.data.votesCounter);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to update vote");
     }
   };
 

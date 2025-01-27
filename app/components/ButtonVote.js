@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-const ButtonVote = ({ count = 0, hasVoted = false, postId }) => {
+const ButtonVote = ({ count = 0, postId }) => {
   const localStorageKeyName = `hasVoted-${postId}`;
   const [hasVoted, setHasVoted] = useState(false);
   const [voteCount, setVoteCount] = useState(count);
